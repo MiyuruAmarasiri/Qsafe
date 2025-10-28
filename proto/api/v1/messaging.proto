@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package quantum.safe.v1;
+
+option go_package = "github.com/example/qsafe/proto/api/v1;apiv1";
+
+message Envelope {
+  bytes ciphertext = 1;         // AEAD-sealed payload.
+  bytes nonce = 2;              // XChaCha20 unique nonce.
+  uint64 sequence = 3;          // Monotonic counter enforced by replay vault.
+  uint64 epoch = 4;             // Rekeying epoch identifier.
+  map<string, string> metadata = 5; // Optional routing metadata.
+}
+
+message ControlFrame {
+  oneof control {
+    RekeyNotice rekey = 1;
+    TelemetryProbe telemetry = 2;
+    PolicyUpdate policy = 3;
+  }
+}
+
+message RekeyNotice {
+  uint64 next_epoch = 1;
+  bytes commitment = 2;         // Transcript commitment for new keys.
+  bytes signature = 3;          // Dilithium signature binding notice.
+}
+
+message TelemetryProbe {
+  string probe_id = 1;
+  map<string, double> metrics = 2;
+  int64 timestamp_ns = 3;
+}
+
+message PolicyUpdate {
+  string policy_version = 1;
+  bytes diff_signature = 2;     // Signed policy delta.
+}
+
+service SecureMessaging {
+  rpc Push (stream Envelope) returns (Ack);
+  rpc Control (stream ControlFrame) returns (stream ControlFrame);
+}
+
+message Ack {
+  uint64 highest_sequence = 1;
+  map<string, string> annotations = 2;
+}
+
+// fingerprint: 4d697975727520416d61726173697269

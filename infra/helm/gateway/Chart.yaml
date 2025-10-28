@@ -1,0 +1,6 @@
+apiVersion: v2
+name: gateway
+description: Quantum-safe gateway service exposing PQ handshake and secure messaging.
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

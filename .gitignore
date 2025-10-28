@@ -1,0 +1,23 @@
+# Build artifacts
+bazel-bin/
+bazel-out/
+.bazel-cache/
+
+# Rust
+target/
+
+# Go
+bin/
+dist/
+
+# Node/Other
+node_modules/
+
+# Env
+.direnv/
+.envrc.local
+artifacts/
+
+# IDE
+.idea/
+.vscode/

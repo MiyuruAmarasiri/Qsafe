@@ -1,0 +1,26 @@
+{
+  "name": "Quantum Safe Dev",
+  "image": "ghcr.io/open-quantum/devbase:latest",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": "false"
+    }
+  },
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  },
+  "postCreateCommand": "asdf install && direnv allow",
+  "remoteEnv": {
+    "PQ_MODE": "strict",
+    "SESSION_ROTATION_S": "900"
+  },
+  "mounts": [
+    "source=${localWorkspaceFolder}/.bazel-cache,target=/workspace/.bazel-cache,type=bind"
+  ],
+  "runArgs": [
+    "--cap-add=SYS_PTRACE",
+    "--security-opt",
+    "seccomp=unconfined"
+  ]
+}

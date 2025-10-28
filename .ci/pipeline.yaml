@@ -1,0 +1,48 @@
+name: quantum-safe-ci
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-verify:
+    runs-on: ubuntu-22.04
+    env:
+      GOTOOLCHAIN: local
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22.3"
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('go.sum') }}
+      - name: Go Tidy
+        run: go mod tidy
+      - name: Go Test
+        run: go test ./...
+      - name: Build Binaries
+        run: make build
+      - name: Trivy Scan
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          scan-type: fs
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+      - name: SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          path: dist
+          artifact-name: qsafe-sbom
+      - name: Generate SLSA provenance
+        run: ./scripts/gen-provenance.sh
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: qsafe-binaries
+          path: dist

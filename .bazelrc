@@ -1,0 +1,11 @@
+common --experimental_convenience_symlinks=normal
+build --compilation_mode=opt
+build --sandbox_tmpfs_path=/tmp
+build --action_env=PQ_MODE
+build --action_env=SESSION_ROTATION_S
+build --repo_env=LIBOQS_DIR
+build:ci --config=release
+build:ci --remote_cache=https://bazel-cache.example.internal
+test --test_output=errors
+test --flaky_test_attempts=2
+run --experimental_ui_deduplicate

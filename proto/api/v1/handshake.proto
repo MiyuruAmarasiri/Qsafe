@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package quantum.safe.v1;
+
+option go_package = "github.com/example/qsafe/proto/api/v1;apiv1";
+
+// CapabilityExchange advertises algorithm support, transport preferences, and policy hints.
+message CapabilityExchange {
+  string node_id = 1;
+  repeated AlgorithmPreference pq_kems = 2;
+  repeated AlgorithmPreference pq_sigs = 3;
+  repeated TransportPreference transports = 4;
+  map<string, string> policy_hints = 5;
+  uint64 epoch = 6; // Used to invalidate stale policy snapshots.
+}
+
+message AlgorithmPreference {
+  string name = 1;            // e.g., "ML-KEM-768"
+  string version = 2;         // Semantic version or commit hash of implementation.
+  uint32 priority = 3;        // Lower number = higher priority.
+  bool can_fallback = 4;      // Whether downgrade to classical counterpart is permitted.
+}
+
+message TransportPreference {
+  string alpn = 1;            // Negotiated ALPN identifier.
+  string framing = 2;         // "grpc", "websocket", "custom".
+  string aead = 3;            // Selected AEAD cipher, e.g., "xchacha20poly1305".
+}
+
+// AttestationBundle carries TPM/HSM quotes and endorsements.
+message AttestationBundle {
+  bytes evidence = 1;         // Raw quote blob.
+  bytes signature = 2;        // ML-DSA signature over evidence.
+  bytes certificate_chain = 3;// Serialized chain of attesting certs.
+  string policy_version = 4;  // Which attestation policy applies.
+  bytes nonce = 5;            // Anti-replay nonce issued by verifier.
+}
+
+// HandshakeInit captures the client's opening salvo.
+message HandshakeInit {
+  CapabilityExchange capabilities = 1;
+  AttestationBundle attestation = 2;
+  bytes encapsulation = 3;    // ML-KEM ciphertext targeting server PQ public key.
+  bytes classical_kex = 4;    // Optional classical ECDHE share for hybrid mode.
+}
+
+// HandshakeResponse is emitted by the gateway.
+message HandshakeResponse {
+  CapabilityExchange capabilities = 1;
+  AttestationBundle attestation = 2;
+  bytes decapsulation_proof = 3; // Dilithium signature binding transcript hash.
+  bytes session_config = 4;      // AEAD configuration, rotation offsets.
+  bytes exporter_secret = 5;     // Optional derived secret for downstream derivations.
+}
+
+// Finished frame confirms key schedule activation.
+message HandshakeFinished {
+  bytes transcript_hash = 1;
+  bytes finished_mac = 2;     // AEAD-protected confirmation.
+  uint64 rotation_epoch = 3;  // Next scheduled key rotation epoch.
+}
+
+service HandshakeService {
+  rpc Negotiate (stream HandshakeFrame) returns (stream HandshakeFrame);
+}
+
+message HandshakeFrame {
+  oneof payload {
+    HandshakeInit init = 1;
+    HandshakeResponse response = 2;
+    HandshakeFinished finished = 3;
+    Alert alert = 4;
+  }
+}
+
+message Alert {
+  enum Severity {
+    SEVERITY_UNSPECIFIED = 0;
+    INFO = 1;
+    WARNING = 2;
+    CRITICAL = 3;
+  }
+  Severity severity = 1;
+  string code = 2;
+  string reason = 3;
+  string remediation_hint = 4;
+}

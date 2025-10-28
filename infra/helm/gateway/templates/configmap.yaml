@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "gateway.fullname" . }}
+  labels:
+    {{- include "gateway.labels" . | nindent 4 }}
+data:
+  config.yaml: |-
+    pqMode: {{ .Values.env.PQ_MODE | default "strict" }}
+    sessionRotationSeconds: {{ .Values.env.SESSION_ROTATION_S | default "900" }}

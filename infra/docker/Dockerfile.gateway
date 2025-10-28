@@ -1,0 +1,24 @@
+# syntax=docker/dockerfile:1.6
+
+FROM golang:1.22-bullseye AS builder
+WORKDIR /workspace
+
+COPY go.mod go.sum* ./
+RUN --mount=type=cache,target=/go/pkg/mod go mod download
+
+COPY cmd cmd
+COPY pkg pkg
+COPY internal internal
+
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build \
+    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /workspace/gateway ./cmd/gateway
+
+FROM gcr.io/distroless/base-debian12:nonroot AS runtime
+WORKDIR /app
+COPY --from=builder /workspace/gateway /app/gateway
+
+ENV PQ_MODE=strict \
+    SESSION_ROTATION_S=900 \
+    OTEL_SERVICE_NAME=gateway
+
+ENTRYPOINT ["/app/gateway"]

@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  gateway:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.gateway
+    image: qsafe/gateway:dev
+    environment:
+      - PQ_MODE=strict
+      - SESSION_ROTATION_S=900
+    ports:
+      - "8443:8443"
+  agent:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.agent
+    image: qsafe/agent:dev
+    environment:
+      - GATEWAY_URL=http://gateway:8443
+    depends_on:
+      - gateway
