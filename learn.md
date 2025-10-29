@@ -1,6 +1,6 @@
 # Learning Qsafe
 
-This guide gives newcomers a structured path to become productive with Qsafe’s quantum-safe communication stack. It combines reading assignments, hands-on labs, and checkpoints so you can build confidence in each subsystem.
+This guide gives newcomers a structured path to become productive with Qsafe’s quantum-safe communication protocol. It combines reading assignments, hands-on labs, and checkpoints so you can build confidence in each subsystem.
 
 ## Learning Objectives
 - Understand how Qsafe blends ML-KEM (Kyber) and ML-DSA (Dilithium) with hardware attestation.
