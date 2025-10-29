@@ -1,0 +1,111 @@
+name: Feature request
+description: Propose an enhancement or new capability for Qsafe
+title: "[Feature]: "
+labels:
+  - enhancement
+  - needs-triage
+body:
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Pre-flight
+      options:
+        - label: I searched existing issues/discussions and did not find this request
+          required: true
+        - label: This is not a security vulnerability disclosure (those go to miyubhashi2002@gmail.com)
+          required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+      description: What problem does this feature solve? Focus on the user or operator pain.
+      placeholder: Operators lack visibility into hybrid handshake downgrade attempts in production.
+    validations:
+      required: true
+  - type: textarea
+    id: persona
+    attributes:
+      label: Primary users
+      description: Who benefits from this change (e.g., operator, platform team, partner service)?
+  - type: textarea
+    id: desired_outcomes
+    attributes:
+      label: Desired outcomes
+      description: What should success look like? Include measurable or testable acceptance criteria.
+      placeholder: |
+        - Detects Kyber downgrade attempts in <60s
+        - Emits OpenTelemetry spans tagged `downgrade=true`
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Outline your preferred approach. Include API/proto updates, CLI flags, or configuration surfaces.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: List alternative solutions or workarounds you have tried.
+  - type: dropdown
+    id: lifecycle
+    attributes:
+      label: Lifecycle stage impacted
+      options:
+        - Capability discovery
+        - Mutual attestation
+        - Hybrid key establishment
+        - Key schedule / rotation
+        - Runtime messaging
+        - Observability / telemetry
+        - Build / CI / provenance
+        - Documentation / enablement
+        - Other / unsure
+    validations:
+      required: true
+  - type: checkboxes
+    id: area
+    attributes:
+      label: Primary area
+      options:
+        - Cryptography / handshake
+        - Attestation flow
+        - Messaging transport
+        - Observability / telemetry
+        - Tooling / DX
+        - Documentation
+        - Other / unsure
+  - type: textarea
+    id: security_compliance
+    attributes:
+      label: Security & compliance considerations
+      description: Could this affect threat model assumptions, attestation policy, or regulatory mappings? Reference docs if relevant.
+  - type: textarea
+    id: telemetry
+    attributes:
+      label: Telemetry & operability
+      description: What metrics, logs, traces, or alerts should accompany this change? Cite `docs/crypto_design.md` or `docs/threat_model.md` if applicable.
+  - type: textarea
+    id: rollout
+    attributes:
+      label: Rollout & migration
+      description: Does this require opt-in flags, PQ mode changes, config migrations, or documentation updates?
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Note upstream/downstream services, libraries, or hardware vendors impacted by this request.
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Add prototypes, diagrams, logs, or related issues/discussions.
+  - type: checkboxes
+    id: coc
+    attributes:
+      label: Code of Conduct
+      options:
+        - label: I agree to follow the Code of Conduct
+          required: true

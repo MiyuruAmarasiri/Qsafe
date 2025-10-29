@@ -1,0 +1,139 @@
+name: Bug report
+description: Help us triage defects in the Qsafe quantum-safe communication stack.
+title: "[Bug]: "
+labels:
+  - bug
+  - needs-triage
+body:
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Pre-flight
+      description: Help us keep the tracker clean.
+      options:
+        - label: I searched existing issues and discussions and did not find a match
+          required: true
+        - label: This report does not contain sensitive security information (otherwise, email security@qsafe.dev)
+          required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What happened? Describe the symptoms in one or two sentences.
+      placeholder: Gateway rejects Kyber ciphertext when attestation succeeds.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected outcome
+      description: Explain what you expected to happen instead.
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: Estimate the impact so we can prioritize the fix.
+      options:
+        - Critical – breaks production traffic or security posture
+        - High – major functionality blocked or unsafe fallback triggered
+        - Medium – degraded experience, manual workaround available
+        - Low – cosmetic or low-risk defect
+    validations:
+      required: true
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Impacted components
+      options:
+        - label: Gateway (`cmd/gateway`)
+        - label: Agent (`cmd/agent`)
+        - label: Shared packages (`pkg/`)
+        - label: Protocol buffers / API (`proto/`)
+        - label: Infrastructure / orchestration (`infra/`, `scripts/`)
+        - label: Documentation (`docs/`)
+        - label: Other / unsure
+  - type: dropdown
+    id: handshake_stage
+    attributes:
+      label: When does the issue occur?
+      options:
+        - Capability discovery
+        - Mutual attestation
+        - Hybrid key establishment
+        - Key schedule / rotation
+        - Channel confirmation / transport activation
+        - Runtime messaging
+        - Observability / telemetry
+        - Build / tooling
+        - Other / unsure
+  - type: dropdown
+    id: transport
+    attributes:
+      label: Transport
+      options:
+        - gRPC
+        - WebSocket
+        - Both
+        - Not applicable
+  - type: dropdown
+    id: pq_mode
+    attributes:
+      label: PQ mode in use
+      options:
+        - strict (PQ-only)
+        - hybrid (PQ + classical fallback)
+        - classical-canary
+        - Not applicable / unsure
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Tell us about versions, commit hashes, deployment targets, TPM/HSM vendors, CPU type, OS/container images, and configuration snippets (e.g., policy files, PQ mode flags).
+      placeholder: |
+        - Gateway commit: 1a2b3c4 (v0.4.0-beta)
+        - Agent commit: 9f8e7d6 (custom build)
+        - Deployment: k8s 1.31 on GKE, TPM 2.0 (Infineon)
+        - Config: pq_mode=hybrid, attestation_policy=v2025.09
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Provide exact commands, inputs, configuration, or pseudo-code needed to trigger the issue. Link to tests or scripts if helpful.
+      placeholder: |
+        1. Run `make run-gateway`
+        2. Start agent with `--gateway=https://localhost:8443 --pq-mode=strict`
+        3. Observe gateway log `kyber: decapsulation failed: invalid ciphertext`
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Evidence
+      description: Paste relevant logs, traces, metrics snapshots, or attach files. Scrub secrets first. Include telemetry trace IDs if available.
+      render: shell
+  - type: textarea
+    id: regression
+    attributes:
+      label: Regression?
+      description: Did this work previously? If so, list the last known-good version and what changed (code, config, environment).
+  - type: textarea
+    id: mitigations
+    attributes:
+      label: Impact & mitigations
+      description: Tell us how often this happens, what the blast radius is, and any temporary mitigation or workaround you found.
+  - type: textarea
+    id: references
+    attributes:
+      label: Related materials
+      description: Link to discussions, docs, design notes, or threat model sections that provide more context.
+  - type: checkboxes
+    id: agreement
+    attributes:
+      label: Code of Conduct
+      options:
+        - label: I agree to follow the Code of Conduct
+          required: true

@@ -1,0 +1,101 @@
+name: Pull Request
+description: Submit changes to the Qsafe quantum-safe communication stack.
+title: "[PR]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing to Qsafe! Please complete each section so reviewers can evaluate risk, testing, and rollout impact.
+  - type: input
+    id: related
+    attributes:
+      label: Related issues or discussions
+      description: Link any issues, discussions, or RFCs (e.g., Fixes #123).
+      placeholder: Fixes #123
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Describe the change, affected components, and user impact.
+      placeholder: |
+        - Adds downgrade detection to hybrid handshake
+        - Emits OTLP metrics when Kyber fallback is triggered
+    validations:
+      required: true
+  - type: checkboxes
+    id: change_type
+    attributes:
+      label: Change type (select all that apply)
+      options:
+        - label: Feature
+        - label: Bug fix
+        - label: Refactor / cleanup
+        - label: Documentation
+        - label: Infrastructure / CI
+        - label: Security-impacting change
+  - type: dropdown
+    id: risk
+    attributes:
+      label: Risk level
+      description: Estimate reviewer effort and blast radius.
+      options:
+        - Low – localized change, minimal risk
+        - Medium – requires coordinated testing or rollout
+        - High – affects handshake, cryptography, or production safety
+    validations:
+      required: true
+  - type: textarea
+    id: testing
+    attributes:
+      label: Testing
+      description: List commands, test suites, or manual validation performed.
+      placeholder: |
+        - make lint
+        - make test
+        - go test -race ./cmd/gateway
+        - Ran gateway/agent handshake against TPM 2.0 hardware
+    validations:
+      required: true
+  - type: checkboxes
+    id: test_matrix
+    attributes:
+      label: Validation checklist
+      options:
+        - label: `make lint`
+        - label: `make test`
+        - label: `make build`
+        - label: `go test -race ./...`
+        - label: Handshake exercised (`make run-gateway` + `make run-agent`)
+        - label: Telemetry inspected (logs, traces, metrics)
+        - label: Not applicable (explain above)
+  - type: textarea
+    id: security
+    attributes:
+      label: Security & compliance impact
+      description: Note changes to cryptography, attestation, PQ modes, or policy enforcement. Reference docs or threat model updates.
+  - type: textarea
+    id: observability
+    attributes:
+      label: Observability
+      description: Describe required telemetry, alerts, dashboards, or SLO updates.
+  - type: textarea
+    id: docs
+    attributes:
+      label: Documentation updates
+      description: List README/docs updates included or required follow-up tasks.
+  - type: textarea
+    id: rollout
+    attributes:
+      label: Rollout and migration
+      description: Mention flags, config migrations, backports, or operator actions.
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Final checks
+      options:
+        - label: I reviewed the diff for accidentally committed secrets or credentials
+          required: true
+        - label: I read and followed CONTRIBUTING.md
+          required: true
+        - label: I agree to follow the Code of Conduct
+          required: true

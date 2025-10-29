@@ -1,0 +1,105 @@
+version: 1
+project:
+  name: Qsafe
+  tagline: Quantum-safe communication protocol stack
+  description: >
+    Qsafe delivers a hybrid post-quantum communication layer that combines ML-KEM (Kyber)
+    key encapsulation, ML-DSA (Dilithium) signatures, and hardware-backed attestation
+    to protect service-to-service messaging. The project focuses on cryptographic
+    agility, deterministic key rotation, and deep observability so operators can
+    detect downgrade attempts and crypto drift early.
+  repository: https://github.com/MiyuruAmarasiri/Qsafe
+  homepage: https://github.com/MiyuruAmarasiri/Qsafe
+  license: MIT
+  topics:
+    - post-quantum-cryptography
+    - secure-communications
+    - zero-trust
+    - devsecops
+    - go
+  languages:
+    - Go
+    - Protocol Buffers
+  maturity: beta
+  maintenance_status: active
+  getting_started:
+    quickstart: README.md
+    docs_overview: docs/executive_brief.md
+    example_binaries:
+      - cmd/gateway
+      - cmd/agent
+ecosystem:
+  components:
+    - name: Gateway
+      description: Terminates hybrid handshake, enforces policy, and brokers transport.
+      path: cmd/gateway
+    - name: Agent
+      description: Client reference implementation with TPM-backed attestation.
+      path: cmd/agent
+    - name: Shared libraries
+      description: Cryptographic and session orchestration packages.
+      path: pkg/
+documentation:
+  architecture: docs/crypto_design.md
+  threat_model: docs/threat_model.md
+  compliance: docs/regulatory_mapping.md
+  operations: README.md
+  executive_brief: docs/executive_brief.md
+contacts:
+  security:
+    - miyubhashi2002@gmail.com
+  maintainers:
+    - name: Miyuru Amarasiri
+      role: Lead maintainer
+      email: miyubhashi2002@gmail.com
+      timezone: UTC+05:30
+    - name: Qsafe Maintainers
+      role: Security response
+      email: miyubhashi2002@gmail.com
+contribution:
+  guidelines: CONTRIBUTING.md
+  code_of_conduct: CODE_OF_CONDUCT.md
+  support: SUPPORT.md
+  security: SECURITY.md
+  issue_templates:
+    bug: .github/ISSUE_TEMPLATE/bug_report.yml
+    feature: .github/ISSUE_TEMPLATE/feature_request.yml
+    support: .github/ISSUE_TEMPLATE/support.yml
+  pull_request_template: .github/PULL_REQUEST_TEMPLATE/pull_request.yml
+  discussions: https://github.com/MiyuruAmarasiri/Qsafe/discussions
+releases:
+  distribution:
+    - type: go-binary
+      name: gateway
+      path: cmd/gateway
+    - type: go-binary
+      name: agent
+      path: cmd/agent
+  build:
+    instructions:
+      - make lint
+      - make test
+      - make build
+    provenance: scripts/gen-provenance.sh
+governance:
+  model: Maintainer-led with public design discussions
+  decision_process: >
+    Proposals are discussed openly in GitHub issues/discussions and approved via pull
+    requests that pass required reviews and checks. Security-sensitive decisions
+    involve the security response maintainers.
+observability:
+  telemetry:
+    - OpenTelemetry traces & metrics exported over OTLP
+    - Structured audit logs for handshake and attestation flows
+  testing:
+    - Downgrade and replay harnesses under tests/
+    - Fuzzing entry points for handshake transcripts
+compliance:
+  standards:
+    - NIST PQC finalists (ML-KEM, ML-DSA)
+    - FIPS 140-3 readiness (level 2 target)
+    - CMMC 2.0 / FedRAMP High control mappings
+  policies:
+    - PQ mode guardrails (`strict`, `hybrid`, `classical-canary`)
+    - Deterministic key rotation (<= 900s / 2^20 packets)
+    - Signed attestation policy bundles

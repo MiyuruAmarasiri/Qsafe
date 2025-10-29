@@ -1,0 +1,99 @@
+name: Support request
+description: Request assistance with using or operating Qsafe
+title: "[Support]: "
+labels:
+  - question
+  - needs-triage
+body:
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Pre-flight
+      options:
+        - label: I reviewed SUPPORT.md and existing issues/discussions
+          required: true
+        - label: This request does not include sensitive security information (otherwise email miyubhashi2002@gmail.com)
+          required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Describe your question or blocker in one or two sentences.
+      placeholder: Agent handshake stalls during mutual attestation inside AKS.
+    validations:
+      required: true
+  - type: dropdown
+    id: pq_mode
+    attributes:
+      label: PQ mode in use
+      options:
+        - strict (PQ-only)
+        - hybrid (PQ + classical fallback)
+        - classical-canary
+        - Not sure / N/A
+  - type: dropdown
+    id: transport
+    attributes:
+      label: Transport
+      options:
+        - gRPC
+        - WebSocket
+        - Both
+        - Not applicable
+  - type: dropdown
+    id: stage
+    attributes:
+      label: Where does the issue occur?
+      options:
+        - Bootstrap / installation
+        - Capability discovery
+        - Mutual attestation
+        - Hybrid key establishment
+        - Key rotation
+        - Runtime messaging
+        - Observability / telemetry
+        - Tooling / CI
+        - Other / unsure
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Provide versions, commit hashes, deployment targets (k8s, bare metal, etc.), TPM/HSM vendor & firmware, CPU type, OS/container image, and relevant configuration flags.
+      placeholder: |
+        - Gateway: v0.4.0-beta (commit 1a2b3c4)
+        - Agent: main@9f8e7d6 (custom attestation policy)
+        - Platform: EKS 1.31, NitroTPM firmware 1.3.6
+        - Config: pq_mode=hybrid, attestation_policy=v2025.09
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps or commands
+      description: Share exact commands, scripts, API calls, or policy snippets that reproduce the issue.
+      render: shell
+  - type: textarea
+    id: telemetry
+    attributes:
+      label: Telemetry & diagnostics
+      description: Include relevant logs, traces, metrics snapshots, or trace IDs. Scrub secrets before sharing.
+      render: shell
+  - type: textarea
+    id: attempts
+    attributes:
+      label: What you have tried
+      description: List troubleshooting steps, rollbacks, or documentation references you already explored.
+    validations:
+      required: true
+  - type: textarea
+    id: desired
+    attributes:
+      label: Desired outcome
+      description: Clarify the goal or definition of done for this support request.
+  - type: checkboxes
+    id: coc
+    attributes:
+      label: Code of Conduct
+      options:
+        - label: I agree to follow the Code of Conduct
+          required: true
