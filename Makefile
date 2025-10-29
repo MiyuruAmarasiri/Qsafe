@@ -45,10 +45,10 @@ run-agent:
 	go run ./cmd/agent --gateway=http://localhost:8443
 
 compose-up:
-	@docker compose -f infra/docker/docker-compose.yml up --build
+	@docker compose -f infra/docker/docker-compose.yaml up --build
 
 compose-down:
-	@docker compose -f infra/docker/docker-compose.yml down
+	@docker compose -f infra/docker/docker-compose.yaml down
 
 clean:
 	@rm -rf $(BUILD_DIR)
