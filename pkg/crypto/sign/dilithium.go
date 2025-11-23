@@ -3,7 +3,7 @@ package sign
 import (
 	"fmt"
 
-	"github.com/cloudflare/circl/sign/dilithium"
+	"github.com/cloudflare/circl/sign/dilithium/mode3"
 )
 
 // KeyPair holds Dilithium key material in binary form.
@@ -24,37 +24,27 @@ type Scheme interface {
 }
 
 // Dilithium3 implements ML-DSA (Dilithium level 3).
-type Dilithium3 struct {
-	mode dilithium.Mode
-}
+type Dilithium3 struct{}
 
 // NewDilithium3 constructs scheme instance.
-func NewDilithium3() *Dilithium3 {
-	mode := dilithium.ModeByName("Dilithium3")
-	if mode == nil {
-		panic("dilithium: mode Dilithium3 not available")
-	}
-	return &Dilithium3{mode: mode}
-}
+func NewDilithium3() *Dilithium3 { return &Dilithium3{} }
 
-func (d *Dilithium3) Name() string {
-	return d.mode.Name()
-}
+func (d *Dilithium3) Name() string { return "Dilithium3" }
 
 func (d *Dilithium3) PublicKeyLength() int {
-	return d.mode.PublicKeySize()
+	return mode3.PublicKeySize
 }
 
 func (d *Dilithium3) PrivateKeyLength() int {
-	return d.mode.PrivateKeySize()
+	return mode3.PrivateKeySize
 }
 
 func (d *Dilithium3) SignatureLength() int {
-	return d.mode.SignatureSize()
+	return mode3.SignatureSize
 }
 
 func (d *Dilithium3) GenerateKeyPair() (KeyPair, error) {
-	pub, priv, err := d.mode.GenerateKey(nil)
+	pub, priv, err := mode3.GenerateKey(nil)
 	if err != nil {
 		return KeyPair{}, fmt.Errorf("dilithium: generate keypair: %w", err)
 	}
@@ -62,14 +52,21 @@ func (d *Dilithium3) GenerateKeyPair() (KeyPair, error) {
 }
 
 func (d *Dilithium3) Sign(privateKey, message []byte) ([]byte, error) {
-	priv := d.mode.PrivateKeyFromBytes(privateKey)
-	sig := d.mode.Sign(priv, message)
+	var priv mode3.PrivateKey
+	if err := priv.UnmarshalBinary(privateKey); err != nil {
+		return nil, fmt.Errorf("dilithium: parse private key: %w", err)
+	}
+	sig := make([]byte, mode3.SignatureSize)
+	mode3.SignTo(&priv, message, sig)
 	return sig, nil
 }
 
 func (d *Dilithium3) Verify(publicKey, message, signature []byte) error {
-	pub := d.mode.PublicKeyFromBytes(publicKey)
-	if !d.mode.Verify(pub, message, signature) {
+	var pub mode3.PublicKey
+	if err := pub.UnmarshalBinary(publicKey); err != nil {
+		return fmt.Errorf("dilithium: parse public key: %w", err)
+	}
+	if !mode3.Verify(&pub, message, signature) {
 		return fmt.Errorf("dilithium: signature verification failed")
 	}
 	return nil
