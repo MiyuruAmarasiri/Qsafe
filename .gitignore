@@ -21,3 +21,4 @@ artifacts/
 # IDE
 .idea/
 .vscode/
+.gocache/
